@@ -12,7 +12,7 @@
       body {
          font-family: Arial, sans-serif;
          line-height: 1.6;
-         color: #333;
+         color: #010000;
       }
 
       .header {
@@ -77,7 +77,7 @@
 
 <body>
    <div class="header">
-      <img src="{{ public_path('images/empresa/66b53d8a7647f.png') }}" alt="Logo" class="logo">
+      <img src="{{ public_path('images/empresa/logo-header-es.svg') }}" alt="Logo" class="logo">
    </div>
    <div class="footer">
       <img src="{{ public_path('images/empresa/footer.png') }}" alt="Logo" class="logo">

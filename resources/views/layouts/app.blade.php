@@ -26,7 +26,7 @@
       <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
          <div class="container">
             <a class="navbar-brand" href="{{ url('/home') }}">
-               {{ config('app.name', 'Laravel') }}
+               <img src="{{ asset('images/empresa/logo-header-es.svg') }}" alt="Logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -108,17 +108,17 @@
    </div>
    <script>
       var forms = document.querySelectorAll('.needs-validation')
-         // Loop over them and prevent submission
-         Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-               form.addEventListener('submit', function(event) {
-                  if (!form.checkValidity()) {
-                     event.preventDefault()
-                     event.stopPropagation()
-                  }
-                  form.classList.add('was-validated')
-               }, false)
-            })
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+         .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+               if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+               }
+               form.classList.add('was-validated')
+            }, false)
+         })
    </script>
    @yield('js')
 </body>

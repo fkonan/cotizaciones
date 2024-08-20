@@ -66,8 +66,7 @@
                <div class="form-group">
                   <label for="valor">Valor</label>
                   <div class="input-group">
-                     <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" readonly
-                        required />
+                     <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
                      @error('valor')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
@@ -98,9 +97,11 @@
             </div>
             <div class="col-md-2">
                <div class="form-group">
-                  <label for="descuento">Descuento</label>
+                  <label for="descuento">Descuento(%)</label>
                   <div class="input-group">
-                     <input name="descuento" type="number" class="form-control" id="descuento" />
+                     <input name="descuento" type="number" class="form-control" id="descuento" min="0" max="99"
+                        maxlength="2"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
                      @error('descuento')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
@@ -313,7 +314,7 @@
                            text: response.data.message,
                         }).then((result) => {
                            if (result.isConfirmed) {
-                             // window.location.reload();
+                               window.location.reload();
                               document.getElementById('btn_guardar').disabled = false;
                            }
                         });
@@ -325,6 +326,7 @@
                            confirmButtonText: 'Aceptar',
                            text: response.data.message,
                         });
+                        document.getElementById('btn_guardar').disabled = false;
                      }
                   })
                   .catch(function (error) {
@@ -336,6 +338,8 @@
                         confirmButtonText: 'Aceptar',
 
                      });
+
+                     document.getElementById('btn_guardar').disabled = false;
                   });
 
             }
@@ -362,8 +366,8 @@
 
    function calcularSubtotal(valor, cantidad, descuento) {
       let subtotal = cantidad * valor;
-      // let total = subtotal - (subtotal * (descuento / 100));
-      let total = subtotal - descuento;
+      let total = subtotal - (subtotal * (descuento / 100));
+      //let total = subtotal - descuento;
       doc.getElementById('subtotal').value = subtotal;
       doc.getElementById('total').value = total;
    }
@@ -380,7 +384,7 @@
          <td>${producto.cantidad}</td>
          <td>${moneyFormat(producto.valor)}</td>
          <td>${moneyFormat(producto.subtotal)}</td>
-         <td>${moneyFormat(producto.descuento)}</td>
+         <td>${(producto.descuento)}%</td>
          <td>${moneyFormat(producto.total)}</td>
          <td>
             <button type="button" class="btn btn-danger d-inline-flex align-items-center btnEliminar"

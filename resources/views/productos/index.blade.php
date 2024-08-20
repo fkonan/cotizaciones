@@ -116,6 +116,11 @@
    const doc = document;
    let frm = doc.getElementById('frm');
 
+   let modal = new bootstrap.Modal(doc.getElementById('modal'), {
+      keyboard: false,
+      backdrop: 'static'
+   });
+
    doc.addEventListener('DOMContentLoaded', function () {
       $('#table').bootstrapTable({
 
@@ -148,11 +153,6 @@
       }
 
       if (e.target.matches('.btnNuevo') || e.target.closest('.btnNuevo')) {
-         let modal = new bootstrap.Modal(doc.getElementById('modal'), {
-            keyboard: false,
-            backdrop: 'static'
-         });
-
          modal.show();
          document.querySelector('.modalTitulo').textContent = 'Nuevo registro'
          document.querySelector('.btnGuardar').textContent = 'Guardar'
@@ -205,13 +205,16 @@
 
       if (e.target.matches('.btnGuardar') || e.target.closest('.btnGuardar')) {
          if ($('#frm')[0].checkValidity()) {
+            // let modal = doc.getElementById('modal')
             e.preventDefault();
 
             let formData = new FormData(frm);
             let fileInput = document.getElementById('foto');
+
             if (fileInput && fileInput.files.length > 0) {
                formData.append('foto', fileInput.files[0]);
             }
+
             let url = document.getElementById('id').value ? `/productos/${document.getElementById('id').value}/update` : '/productos';
 
             axios(
@@ -233,6 +236,7 @@
                         text: response.data.message,
                      });
 
+                     modal.hide();
                   } else {
                      Swal.fire({
                         icon: 'error',
@@ -252,7 +256,7 @@
 
                   });
                });
-            modal.hide();
+
             $('#table').bootstrapTable('refresh');
          }
       }
@@ -263,6 +267,8 @@
          axios.get(`/productos/${id}/edit`)
             .then(function (response) {
                if (response.data.datos) {
+
+
                   modal.show();
                   doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
                   doc.querySelector('.btnGuardar').textContent = 'Actualizar'
@@ -277,7 +283,7 @@
                      confirmButtonText: 'Aceptar',
                      text: response.data.message,
                   });
-                  modal.hdie();
+                  modal.hide();
                }
             })
             .catch(function (error) {

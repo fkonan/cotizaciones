@@ -26,9 +26,10 @@
             <tr class="table-secondary">
                <th data-field="cliente" data-formatter="validarCol">Cliente</th>
                <th data-field="fecha">Fecha de la cotización</th>
-               <th data-field="subtotal">Sub-total</th>
-               <th data-field="total">Total</th>
-               <th data-field="pdf">Archivo pdf</th>
+               <th data-field="subtotal" data-formatter="validarCol">Sub-total</th>
+               <th data-field="descuento" data-formatter="validarCol">Descuento (%)</th>
+               <th data-field="total" data-formatter="validarCol">Total</th>
+               <th data-field="pdf" data-formatter="validarCol">Archivo pdf</th>
                <th data-field="acciones" data-formatter="validarCol">Acciones</th>
             </tr>
          </thead>
@@ -298,24 +299,7 @@
       }
    });
 
-   doc.addEventListener('click', function(e) {
-      if (e.target.matches('.btn-cerrar') || e.target.matches('#modal') || e.target.closest('.btn-cerrar')) {
-         frm.reset();
-         document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
-         document.querySelector('.btnGuardar').textContent = 'Guardar';
-         frm.classList.remove('was-validated');
-         document.getElementById('id').value = '';
-         modal.hide();
-      }
-   });
 
-   $('#modal').on('hidden.bs.modal', function() {
-      frm.reset();
-      document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
-      document.querySelector('.btnGuardar').textContent = 'Guardar';
-      frm.classList.remove('was-validated');
-      document.getElementById('id').value = '';
-   });
 </script>
 
 <script>
@@ -330,6 +314,26 @@
       if (field == 'cliente') {
          return `${row.cliente.nombres} ${row.cliente.apellidos}`;
       }
+
+      if (field == 'subtotal' || field == 'total' ) {
+         return `${moneyFormat(value)}`;
+      }
+
+      if (field == 'descuento') {
+         return `${value}%`;
+      }
+
+      if (field == 'pdf') {
+         return `
+            <a href="storage/${value}" target="_blank" class="btn btn-sm btn-link">
+               <i class="bi bi-pdf"></i>Descargar
+            </a>`;
+      }
+   }
+
+   function moneyFormat(value) {
+      let valueConversion = new Intl.NumberFormat("es-CO", { style: "currency", currency: 'COP', minimumFractionDigits: 0 }).format(value);
+      return valueConversion;
    }
 
    function productos(index, row) {
@@ -340,7 +344,7 @@
                <th>Cantidad</th>
                <th>Valor</th>
                <th>Sub-total</th>
-               <th>Descuento</th>
+               <th>Descuento (%)</th>
                <th>Total</th>
             </tr>
          </thead>
@@ -350,10 +354,10 @@
          html += `<tr>
             <td>${item.producto.producto}</td>
             <td>${item.cantidad}</td>
-            <td>${item.valor}</td>
-            <td>${item.subtotal}</td>
-            <td>${item.descuento}</td>
-            <td>${item.total}</td>
+            <td>${moneyFormat(item.valor)}</td>
+            <td>${moneyFormat(item.subtotal)}</td>
+            <td>${item.descuento}%</td>
+            <td>${moneyFormat(item.total)}</td>
          </tr>`;
       });
 
