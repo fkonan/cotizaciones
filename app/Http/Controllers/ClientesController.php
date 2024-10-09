@@ -16,12 +16,16 @@ class ClientesController extends Controller
    {
       try {
          $cliente = new Clientes();
+         $cliente->tipo_doc = $request->tipo_doc;
          $cliente->documento = $request->documento;
+         $cliente->div = $request->div;
          $cliente->nombres = $request->nombres;
          $cliente->apellidos = $request->apellidos;
+         $cliente->razon_social = $request->razon_social;
          $cliente->correo = $request->correo;
          $cliente->telefono = $request->telefono;
          $cliente->direccion = $request->direccion;
+         $cliente->contacto = $request->contacto;
          if ($cliente->save())
             return response()->json(['success' => true, 'message' => 'Registro creado exitosamente'], 200);
          else
@@ -44,12 +48,16 @@ class ClientesController extends Controller
    public function update(Request $request, $id)
    {
       if ($cliente = Clientes::find($id)) {
+         $cliente->tipo_doc = $request->tipo_doc;
          $cliente->documento = $request->documento;
+         $cliente->div = $request->div;
          $cliente->nombres = $request->nombres;
          $cliente->apellidos = $request->apellidos;
+         $cliente->razon_social = $request->razon_social;
          $cliente->correo = $request->correo;
          $cliente->telefono = $request->telefono;
          $cliente->direccion = $request->direccion;
+         $cliente->contacto = $request->contacto;
          $cliente->save();
          return response()->json(['success' => true, 'message' => 'Registro actualizado correctamente'], 200);
       } else {
@@ -61,7 +69,8 @@ class ClientesController extends Controller
    {
       try {
          $cliente = Clientes::find($id);
-         $cliente->delete();
+         $cliente->status = 0;
+         $cliente->save();
          return response()->json(['success' => true, 'message' => 'Registro eliminado exitosamente'], 200);
       } catch (\Exception $e) {
          // Captura cualquier excepción y devuelve una respuesta de error
@@ -71,7 +80,7 @@ class ClientesController extends Controller
 
    public function getAll()
    {
-      $clientes = Clientes::all();
+      $clientes = Clientes::where('status', 1)->get();
       return response()->json($clientes);
    }
 }

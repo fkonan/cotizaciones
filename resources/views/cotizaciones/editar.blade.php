@@ -5,203 +5,224 @@
 @section('content')
 
 <div class="card">
-   <div class="card-header">
-      <div class="row mb-2">
-         <div class="col">
-            <h5 class="mb-0">Nueva cotización</h5>
-         </div>
-      </div>
-   </div>
-   <form id="frm" class="needs-validation" method="POST" novalidate>
-      @csrf
-      <div class="card-body">
-         <div class="row mb-2">
-            <div class="col-md-3">
-               <div class="form-group">
-                  <label for="fecha">Fecha de la cotización</label>
-                  <div class="input-group">
-                     <input name="fecha" type="text" class="form-control" placeholder="01/01/2024" id="fecha" autofocus
-                        required value="{{date('d/m/Y')}}" readonly />
-                     @error('fecha')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-9">
-               <div class="form-group">
-                  <label for="cliente_id">Cliente</label>
-                  <div class="input-group">
-                     <select name="cliente_id" class="form-select" id="cliente_id" required>
-                        <option value="">Seleccione...</option>
-                        @foreach ($clientes as $cliente)
-                        <option value="{{ $cliente->id }}" data-correo="{{$cliente->correo}}">{{ $cliente->documento }}
-                           - {{ $cliente->tipo_doc == 'NIT' ? $cliente->razon_social : ($cliente->nombres . ' ' . $cliente->apellidos) }}
-                        </option>
-                        @endforeach
-                     </select>
-                     @error('cliente_id')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
+	<div class="card-header">
+		<div class="row mb-2">
+			<div class="col">
+				<h5 class="mb-0">Editar cotización</h5>
+			</div>
+		</div>
+	</div>
+	<form id="frm" class="needs-validation" method="POST" novalidate>
+		@csrf
+		<div class="card-body">
+			<div class="row mb-2">
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="fecha">Fecha de la cotización</label>
+                  <input type="hidden" class="form-control" name="id" id="id" value="{{$datos->id}}">
 
-         </div>
-         <div class="row mb-2">
-            <div class="col-md-4">
-               <div class="form-group">
-                  <label for="producto_id">Producto</label>
-                  <div class="input-group">
-                     <select name="producto_id" class="form-select" id="producto_id" required>
-                        <option value="">Seleccione...</option>
-                        @foreach ($productos as $item)
-                        <option data-valor="{{ $item->valor }}" data-foto="{{$item->foto}}" value="{{ $item->id }}">{{ $item->producto }}</option>
-                        @endforeach
-                     </select>
-                     @error('producto_id')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-2">
-               <div class="form-group">
-                  <label for="valor">Valor</label>
-                  <div class="input-group">
-                     <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
-                     @error('valor')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-1">
-               <div class="form-group">
-                  <label for="cantidad">Cantidad</label>
-                  <div class="input-group">
-                     <input name="cantidad" type="number" class="form-control" id="cantidad" autofocus required />
-                     @error('cantidad')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-2">
-               <div class="form-group">
-                  <label for="subtotal">Subtotal</label>
-                  <div class="input-group">
-                     <input name="subtotal" type="number" class="form-control" id="subtotal" required readonly />
-                     @error('subtotal')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-2">
-               <div class="form-group">
-                  <label for="total">Total</label>
-                  <div class="input-group">
-                     <input name="total" type="number" class="form-control" id="total" readonly />
-                     @error('total')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-1 d-flex align-self-end">
-               <button class="btn btn-warning" type="button" id="btnAgregar">Agregar</button>
-            </div>
-         </div>
-         <hr>
-         <div class="row mb-2">
-            <div class="col-md-12">
-               <table class="table table-centered table-nowrap mb-0 rounded table-sm" id="tabla_productos"
-                  data-toggle="table">
-                  <thead class="thead-light">
-                     <tr>
-                        <th class="border-0 rounded-start">#</th>
-                        <th class="border-0">Producto</th>
-                        <th class="border-0">Cantidad</th>
-                        <th class="border-0">Valor</th>
-                        <th class="border-0">SubTotal</th>
-                        <th class="border-0">Descuento</th>
-                        <th class="border-0">Total</th>
-                        <th class="border-0">Acciones</th>
-                     </tr>
-                  </thead>
-                  <tbody id="tbody">
-                  </tbody>
-               </table>
-            </div>
-         </div>
-         <hr>
-         <div class="row mb-2">
-            <div class="col-md-6">
-               <div class="row">
-                  <div class="col-md-12 mb-2">
-                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="enviar_correo" name="enviar_correo">
-                        <label class="form-check-label" for="enviar_correo">
-                           Enviar cotización por correo electrónico?
-                        </label>
-                     </div>
-                  </div>
-                  <div class="col-md-12">
-                     <div class="form-group">
-                        <label for="correo">Correo electrónico del cliente</label>
-                        <div class="input-group">
-                           <input name="correo" type="text" class="form-control border-gray-300" id="correo" />
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-6 text-end mt-2">
-               <div class="form-group">
-                  <label for="subtotal">
-                     <h3>SubTotal:</h3>
-                     <input name="subtotal" type="text" class="border-0 text-end display-6" id="subtotal"
-                        readonly>
-                  </label>
-                  <label for="descuento">
-                     <h3>Descuento:</h3>
-                     <input name="descuento" type="text" class="border-0 text-end display-6" id="descuento"
-                        readonly>
-                  </label>
-                  <label for="total">
-                     <h3>Total a pagar:</h3>
-                     <input name="total" type="text" class="border-0 text-end display-6" id="total"
-                        readonly>
-                  </label>
-               </div>
-            </div>
+						<div class="input-group">
+							<input name="fecha" type="text" class="form-control" placeholder="01/01/2024" id="fecha" autofocus
+								required value="{{$datos->fecha}}" readonly />
+							@error('fecha')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="cliente_id">Cliente</label>
+						<div class="input-group">
+							<select name="cliente_id" class="form-select" id="cliente_id" required>
+								<option value="">Seleccione...</option>
+								@foreach ($clientes as $cliente)
+								<option value="{{ $cliente->id }}" data-correo="{{$cliente->correo}}" @if ($datos->
+									cliente_id==$cliente->id) selected @endif
+									>
+									{{ $cliente->documento }} - {{ $cliente->nombres }} {{ $cliente->apellidos }}</option>
+								@endforeach
+							</select>
+							@error('cliente_id')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="producto_id">Producto</label>
+						<div class="input-group">
+							<select name="producto_id" class="form-select" id="producto_id" required>
+								<option value="">Seleccione...</option>
+								@foreach ($productos as $item)
+								<option data-valor="{{ $item->valor }}" value="{{ $item->id }}">{{ $item->producto }}</option>
+								@endforeach
+							</select>
+							@error('producto_id')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mb-2">
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="valor">Valor</label>
+						<div class="input-group">
+							<input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
+							@error('valor')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1">
+					<div class="form-group">
+						<label for="cantidad">Cantidad</label>
+						<div class="input-group">
+							<input name="cantidad" type="number" class="form-control" id="cantidad" autofocus required />
+							@error('cantidad')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="subtotal">Subtotal</label>
+						<div class="input-group">
+							<input name="subtotal" type="number" class="form-control" id="subtotal" required readonly />
+							@error('subtotal')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="descuento">Descuento(%)</label>
+						<div class="input-group">
+							<input name="descuento" type="number" class="form-control" id="descuento" min="0" max="99"
+								maxlength="2"
+								oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+							@error('descuento')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<label for="total">Total</label>
+						<div class="input-group">
+							<input name="total" type="number" class="form-control" id="total" readonly />
+							@error('total')
+							<div class="invalid-feedback">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1 d-flex align-self-end">
+					<button class="btn btn-warning" type="button" id="btnAgregar">Agregar</button>
+				</div>
+			</div>
+			<hr>
+			<div class="row mb-2">
+				<div class="col-md-12">
+					<table class="table table-centered table-nowrap mb-0 rounded table-sm" id="tabla_productos"
+						data-toggle="table">
+						<thead class="thead-light">
+							<tr>
+								<th class="border-0 rounded-start">#</th>
+								<th class="border-0">Producto</th>
+								<th class="border-0">Cantidad</th>
+								<th class="border-0">Valor</th>
+								<th class="border-0">SubTotal</th>
+								<th class="border-0">Descuento</th>
+								<th class="border-0">Total</th>
+								<th class="border-0">Acciones</th>
+							</tr>
+						</thead>
+						<tbody id="tbody">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<hr>
+			<div class="row mb-2">
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-md-12 mb-2">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" id="enviar_correo" name="enviar_correo">
+								<label class="form-check-label" for="enviar_correo">
+									Enviar cotización por correo electrónico?
+								</label>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="correo">Correo electrónico del cliente</label>
+								<div class="input-group">
+									<input name="correo" type="text" class="form-control border-gray-300" id="correo" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 text-end mt-2">
+					<div class="form-group">
+						<label for="total_pagar">
+							<h3>Total a Pagar:</h3>
+							<input name="total_pagar" type="text" class="border-0 text-end display-6" id="total_pagar"
+								readonly>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="row mb-2">
 
-         </div>
-         <div class="row mb-2">
-
-         </div>
-         <div class="d-grid float-right">
-            <input type="hidden" name="id" id="id" />
-            <button type="submit" class="btn btn-primary btnGuardar" id="btn_guardar">Guardar cotización</button>
-         </div>
-      </div>
-   </form>
+			</div>
+			<div class="d-grid float-right">
+				<input type="hidden" name="id" id="id" />
+				<button type="submit" class="btn btn-primary btnGuardar" id="btn_guardar">Guardar cotización</button>
+			</div>
+		</div>
+	</form>
 </div>
 @endsection
 @section('js')
 
 <script>
-   const doc = document;
+	const doc = document;
    const PRODUCTOS_VENTA = [];
+
+   const datos=@php echo json_encode($datos); @endphp
 
    let cantidad = doc.getElementById('cantidad');
    let descuento = doc.getElementById('descuento');
 
    doc.addEventListener('DOMContentLoaded', function () {
 
-      $('#cliente_id').select2();
+		datos.cotizacion_detalles.forEach((item, index) => {
+			const nuevoProducto = {
+				id: index + 1,
+				producto_id: item.producto_id,
+				producto_nombre: item.producto.producto,
+				valor: item.valor,
+				cantidad: item.cantidad,
+				subtotal: item.subtotal,
+				descuento: item.descuento,
+				total: item.total,
+				neto_pagar: datos.total,
+			};
+			PRODUCTOS_VENTA.push(nuevoProducto);
+		});
+		actualizarTabla();
 
+      $('#cliente_id').select2();
       $('#tabla_productos').bootstrapTable({
 
          formatNoMatches: function () {
@@ -215,11 +236,11 @@
 
             if (doc.getElementById('producto_id').value.length > 0) {
                let producto = doc.getElementById('producto_id').options[doc.getElementById('producto_id').selectedIndex].text;
+
                const nuevoProducto = {
                   id: PRODUCTOS_VENTA.length + 1,
                   producto_id: doc.getElementById('producto_id').value,
                   producto_nombre: producto,
-                  producto_foto: doc.getElementById('producto_id').options[doc.getElementById('producto_id').selectedIndex].dataset.foto,
                   valor: doc.getElementById('valor').value,
                   cantidad: cantidad.value,
                   subtotal: doc.getElementById('subtotal').value,
@@ -279,11 +300,11 @@
             return;
          }
          let formData = new FormData(frm);
-         let url = '/cotizaciones';
+         let url = '/cotizaciones/update';
 
          Swal.fire({
             title: "¿Esta seguro de realizar esta transaccion?",
-            text: "Se guardara la cotización",
+            text: "Se actualziara la cotización",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -297,6 +318,7 @@
                document.getElementById('btn_guardar').disabled = true;
                let datos = Object.fromEntries(formData);
                let insert = {
+                  "id": doc.getElementById('id').value,
                   "cliente_id": datos.cliente_id,
                   "fecha": datos.fecha,
                   "productos": PRODUCTOS_VENTA
@@ -313,13 +335,12 @@
                      if (response.data.success) {
                         Swal.fire({
                            icon: 'success',
-                           title: 'Registro creado exitosamente',
+                           title: 'Registro actualizado exitosamente',
                            // confirmButtonText: 'Aceptar',
                            text: response.data.message,
                         }).then((result) => {
                            if (result.isConfirmed) {
-
-                              window.location.reload();
+                              window.location.href = '/cotizaciones';
                               document.getElementById('btn_guardar').disabled = false;
                            }
                         });
@@ -355,7 +376,7 @@
    });
 </script>
 <script>
-   function loading(estado = true) {
+	function loading(estado = true) {
       if (estado)
          Swal.fire({
             title: "Procesando...",

@@ -11,7 +11,9 @@ window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+import select2 from 'select2';
 
+select2();
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

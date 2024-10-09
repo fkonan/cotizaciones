@@ -19,7 +19,6 @@ class CotizacionesDetalle extends Model
       'subtotal',
       'descuento',
       'total',
-      'iva',
    ];
 
    public function cotizacion()

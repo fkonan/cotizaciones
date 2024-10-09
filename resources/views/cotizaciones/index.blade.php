@@ -185,7 +185,7 @@
             confirmButtonText: 'Sí, eliminar'
          }).then((result) => {
             if (result.value) {
-               axios.delete(`/clientes/${id}/delete`)
+               axios.delete(`/cotizaciones/${id}/delete`)
                   .then(function(response) {
                      if (response.data.success) {
                         Swal.fire({
@@ -260,43 +260,6 @@
             $('#table').bootstrapTable('refresh');
          }
       }
-
-      if (e.target.matches('.btnActualizar') || e.target.closest('.btnActualizar')) {
-         let id = e.target.dataset.id;
-
-         axios.get(`/clientes/${id}/edit`)
-            .then(function(response) {
-               if (response.data.datos) {
-                  modal.show();
-                  doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
-                  doc.querySelector('.btnGuardar').textContent = 'Actualizar'
-                  doc.getElementById('id').value = response.data.datos.id;
-                  doc.getElementById('documento').value = response.data.datos.documento;
-                  doc.getElementById('nombres').value = response.data.datos.nombres;
-                  doc.getElementById('apellidos').value = response.data.datos.apellidos;
-                  doc.getElementById('correo').value = response.data.datos.correo;
-                  doc.getElementById('telefono').value = response.data.datos.telefono;
-                  doc.getElementById('direccion').value = response.data.datos.direccion;
-               } else {
-                  Swal.fire({
-                     icon: 'error',
-                     title: 'Error',
-                     confirmButtonText: 'Aceptar',
-                     text: response.data.message,
-                  });
-                  modal.hdie();
-               }
-            })
-            .catch(function(error) {
-               console.error('Error en la solicitud:', error);
-               Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'Hubo un problema al procesar la solicitud',
-                  confirmButtonText: 'Aceptar',
-               });
-            });
-      }
    });
 
 
@@ -306,9 +269,13 @@
    function validarCol(value, row, index, field) {
       if (field == 'acciones') {
          return `
+            <a data-id="${row.id}" href="/cotizaciones/${row.id}/edit" type="button" class="btn btn-sm btnActualizar btn-warning"">
+               <i data-id=" ${row.id}" class="bi bi-pencil"></i>
+            </a>
             <button data-id="${row.id}" type="button" class="btn btn-sm btnEliminar btn-danger"">
                <i data-id="${row.id}" class="bi bi-trash"></i>
-            </button>`;
+            </a>
+            `;
       }
 
       if (field == 'cliente') {
