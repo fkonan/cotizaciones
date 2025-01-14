@@ -26,6 +26,7 @@
          <thead>
             <tr class="table-secondary">
                <th data-sortable="true" data-field="producto">Nombre del producto</th>
+               <th data-field="frecuencia_dias">Frecuencia dias</th>
                <th data-sortable="true" data-field="valor">Valor</th>
                <th data-field="foto" data-formatter="validarCol">Foto</th>
                <th data-field="acciones" data-formatter="validarCol">Acciones</th>
@@ -46,7 +47,7 @@
             <form id="frm" class="needs-validation" method="POST" novalidate enctype="multipart/form-data">
                @csrf
                <div class="row mb-2">
-                  <div class="col-md-5">
+                  <div class="col-md-6">
                      <div class="form-group">
                         <label for="producto">Nombre del producto</label>
                         <div class="input-group">
@@ -60,6 +61,20 @@
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
+                        <label for="frecuencia_dias">Frecuencia dias</label>
+                        <div class="input-group">
+                           <input name="frecuencia_dias" type="text" class="form-control border-gray-300"
+                              placeholder="5/15, 28" id="frecuencia_dias" autofocus required />
+                           @error('frecuencia_dias')
+                           <div class="invalid-feedback">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="row mb-3">
+                  <div class="col-md-3">
+                     <div class="form-group">
                         <label for="valor">Valor</label>
                         <div class="input-group">
                            <input name="valor" type="number" class="form-control border-gray-300"
@@ -70,7 +85,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-9">
                      <div class="form-group">
                         <label for="foto">Imagen del producto</label>
                         <div class="input-group">
@@ -116,6 +131,11 @@
    const doc = document;
    let frm = doc.getElementById('frm');
 
+   let modal = new bootstrap.Modal(doc.getElementById('modal'), {
+      keyboard: false,
+      backdrop: 'static'
+   });
+
    doc.addEventListener('DOMContentLoaded', function () {
       $('#table').bootstrapTable({
 
@@ -148,11 +168,6 @@
       }
 
       if (e.target.matches('.btnNuevo') || e.target.closest('.btnNuevo')) {
-         let modal = new bootstrap.Modal(doc.getElementById('modal'), {
-            keyboard: false,
-            backdrop: 'static'
-         });
-
          modal.show();
          document.querySelector('.modalTitulo').textContent = 'Nuevo registro'
          document.querySelector('.btnGuardar').textContent = 'Guardar'
@@ -205,13 +220,16 @@
 
       if (e.target.matches('.btnGuardar') || e.target.closest('.btnGuardar')) {
          if ($('#frm')[0].checkValidity()) {
+            // let modal = doc.getElementById('modal')
             e.preventDefault();
 
             let formData = new FormData(frm);
             let fileInput = document.getElementById('foto');
+
             if (fileInput && fileInput.files.length > 0) {
                formData.append('foto', fileInput.files[0]);
             }
+
             let url = document.getElementById('id').value ? `/productos/${document.getElementById('id').value}/update` : '/productos';
 
             axios(
@@ -233,6 +251,7 @@
                         text: response.data.message,
                      });
 
+                     modal.hide();
                   } else {
                      Swal.fire({
                         icon: 'error',
@@ -252,7 +271,7 @@
 
                   });
                });
-            modal.hide();
+
             $('#table').bootstrapTable('refresh');
          }
       }
@@ -263,12 +282,15 @@
          axios.get(`/productos/${id}/edit`)
             .then(function (response) {
                if (response.data.datos) {
+
+
                   modal.show();
                   doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
                   doc.querySelector('.btnGuardar').textContent = 'Actualizar'
                   doc.getElementById('id').value = response.data.datos.id;
                   doc.getElementById('producto').value = response.data.datos.producto;
                   doc.getElementById('valor').value = response.data.datos.valor;
+                  doc.getElementById('frecuencia_dias').value = response.data.datos.frecuencia_dias;
                   doc.getElementById('foto').removeAttribute('required');
                } else {
                   Swal.fire({
@@ -277,7 +299,7 @@
                      confirmButtonText: 'Aceptar',
                      text: response.data.message,
                   });
-                  modal.hdie();
+                  modal.hide();
                }
             })
             .catch(function (error) {

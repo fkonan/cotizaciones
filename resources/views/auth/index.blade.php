@@ -5,7 +5,7 @@
    <div class="card-header">
       <div class="row">
          <div class="col">
-            <h5 class="mb-0">Mis contizaciones</h5>
+            <h5 class="mb-0">Usuarios del Sistema</h5>
          </div>
       </div>
    </div>
@@ -20,18 +20,13 @@
             </button>
          </div>
       </div>
-      <table id="table" class="table table-sm mt-1" data-search="true" data-toggle="table" data-detail-view="true"
-         data-detail-view-by-click="true" data-detail-formatter="productos">
+      <table id="table" class="table table-sm mt-1" data-search="true" data-toggle="table">
          <thead>
             <tr class="table-secondary">
-               <th data-field="cliente" data-formatter="validarCol">Cliente</th>
-               <th data-field="fecha">Fecha de la cotización</th>
-               <th data-field="subtotal" data-formatter="validarCol">Sub-total</th>
-               <th data-field="descuento" data-formatter="validarCol">Descuento (%)</th>
-               <th data-field="subtotal2" data-formatter="validarCol">Sub-total</th>
-               <th data-field="iva" data-formatter="validarCol">Iva</th>
-               <th data-field="total" data-formatter="validarCol">Total</th>
-               <th data-field="pdf" data-formatter="validarCol">Archivo pdf</th>
+               <th data-field="documento">Documento</th>
+               <th data-field="name">Nombre del usuario</th>
+               <th data-field="email">Correo electrónico</th>
+               <th data-field="is_admin" data-formatter="validarCol">Es admin?</th>
                <th data-field="acciones" data-formatter="validarCol">Acciones</th>
             </tr>
          </thead>
@@ -39,7 +34,7 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal" role="dialog" aria-hidden="true">
+{{-- <div class="modal fade" id="modal" role="dialog" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
          <div class="modal-header">
@@ -134,7 +129,7 @@
          </div>
       </div>
    </div>
-</div>
+</div> --}}
 
 @section('js')
 
@@ -142,15 +137,15 @@
    const doc = document;
 
    let frm = doc.getElementById('frm');
-   let modal = new bootstrap.Modal(doc.getElementById('modal'), {
-      keyboard: false,
-      backdrop: 'static'
-   });
+   // let modal = new bootstrap.Modal(doc.getElementById('modal'), {
+   //    keyboard: false,
+   //    backdrop: 'static'
+   // });
 
    doc.addEventListener('DOMContentLoaded', function() {
       $('#table').bootstrapTable({
 
-         url: '/cotizaciones/getAll',
+         url: '/auth/getAll',
          method: 'GET',
 
          formatNoMatches: function() {
@@ -167,13 +162,6 @@
          $('#table').bootstrapTable('refresh');
       }
 
-      if (e.target.matches('.btnNuevo') || e.target.closest('.btnNuevo')) {
-         modal.show();
-         document.querySelector('.modalTitulo').textContent = 'Nuevo registro'
-         document.querySelector('.btnGuardar').textContent = 'Guardar'
-         document.getElementById('id').value = ''
-      }
-
       if (e.target.matches('.btnEliminar') || e.target.closest('.btnEliminar')) {
          let id = e.target.dataset.id;
 
@@ -187,7 +175,7 @@
             confirmButtonText: 'Sí, eliminar'
          }).then((result) => {
             if (result.value) {
-               axios.delete(`/cotizaciones/${id}/delete`)
+               axios.delete(`/auth/${id}/delete`)
                   .then(function(response) {
                      if (response.data.success) {
                         Swal.fire({
@@ -217,121 +205,22 @@
             }
          })
       }
-
-      if (e.target.matches('.btnGuardar') || e.target.closest('.btnGuardar')) {
-         if ($('#frm')[0].checkValidity()) {
-            e.preventDefault();
-
-            let formData = new FormData(frm);
-            let url = document.getElementById('id').value ? `/clientes/${document.getElementById('id').value}/update` : '/clientes';
-
-            axios({
-                  method: 'post',
-                  url: url,
-                  data: formData,
-               })
-               .then(function(response) {
-                  if (response.data.success) {
-                     Swal.fire({
-                        icon: 'success',
-                        title: 'Registro creado exitosamente',
-                        confirmButtonText: 'Aceptar',
-                        text: response.data.message,
-                     });
-
-                  } else {
-                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        confirmButtonText: 'Aceptar',
-                        text: response.data.message,
-                     });
-                  }
-               })
-               .catch(function(error) {
-                  console.error('Error en la solicitud:', error);
-                  Swal.fire({
-                     icon: 'error',
-                     title: 'Error',
-                     text: 'Hubo un problema al procesar la solicitud',
-                     confirmButtonText: 'Aceptar',
-
-                  });
-               });
-            modal.hide();
-            $('#table').bootstrapTable('refresh');
-         }
-      }
    });
-
-
 </script>
 
 <script>
    function validarCol(value, row, index, field) {
       if (field == 'acciones') {
          return `
-            <a data-id="${row.id}" href="/cotizaciones/${row.id}/edit" type="button" class="btn btn-sm btnActualizar btn-warning"">
-               <i data-id=" ${row.id}" class="bi bi-pencil"></i>
-            </a>
-
             <button data-id="${row.id}" type="button" class="btn btn-sm btnEliminar btn-danger"">
                <i data-id="${row.id}" class="bi bi-trash"></i>
             </a>
          `;
       }
 
-      if (field == 'cliente') {
-         return row.cliente.tipo_doc=='NIT'?`${row.cliente.razon_social}`:`${row.cliente.nombres} ${row.cliente.apellidos}`;
+      if (field == 'is_admin') {
+         return row.is_admin?`SI`:`NO`;
       }
-
-      if (field == 'subtotal' || field == 'total' || field == 'iva'|| field == 'subtotal2' ) {
-         return `${moneyFormat(value)}`;
-      }
-
-
-      if (field == 'descuento') {
-         return `${value}%`;
-      }
-
-      if (field == 'pdf') {
-         return `
-            <a href="storage/${value}" target="_blank" class="btn btn-sm btn-link">
-               <i class="bi bi-pdf"></i>Descargar
-            </a>`;
-      }
-   }
-
-   function moneyFormat(value) {
-      let valueConversion = new Intl.NumberFormat("es-CO", { style: "currency", currency: 'COP', minimumFractionDigits: 0 }).format(value);
-      return valueConversion;
-   }
-
-   function productos(index, row) {
-      let html = `<table class="table table-sm">
-         <thead>
-            <tr>
-               <th>Producto</th>
-               <th>Cantidad</th>
-               <th>Valor</th>
-               <th>Total</th>
-            </tr>
-         </thead>
-         <tbody>`;
-
-      row.cotizacion_detalles.forEach(item => {
-         html += `<tr>
-            <td>${item.producto.producto}</td>
-            <td>${item.cantidad}</td>
-            <td>${moneyFormat(item.valor)}</td>
-            <td>${moneyFormat(item.total)}</td>
-         </tr>`;
-      });
-
-      html += `</tbody>
-      </table>`;
-
-      return html;
    }
 </script>
 @endsection

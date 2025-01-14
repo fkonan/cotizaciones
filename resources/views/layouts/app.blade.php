@@ -26,7 +26,7 @@
       <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
          <div class="container">
             <a class="navbar-brand" href="{{ url('/home') }}">
-               {{ config('app.name', 'Laravel') }}
+               <img src="{{ asset('images/empresa/logo-header-es.svg') }}" alt="Logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -47,6 +47,10 @@
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="/productos">Productos</a></li>
                         <li><a class="dropdown-item" href="/empresa">Empresa</a></li>
+                        @if(Auth::check() && Auth::user()->is_admin)
+                        <li><a class="dropdown-item" href="/auth/index">Listado de usuarios</a></li>
+                        <li><a class="dropdown-item" href="/register">Nuevo usuario</a></li>
+                        @endif
                      </ul>
                   </li>
                   <li class="nav-item">
@@ -66,17 +70,7 @@
                <ul class="navbar-nav ms-auto">
                   <!-- Authentication Links -->
                   @guest
-                  @if (Route::has('login'))
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                  </li>
-                  @endif
 
-                  @if (Route::has('register'))
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                  </li>
-                  @endif
                   @else
                   <li class="nav-item dropdown">
                      <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -106,19 +100,21 @@
          @yield('content')
       </main>
    </div>
+
    <script>
       var forms = document.querySelectorAll('.needs-validation')
-         // Loop over them and prevent submission
-         Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-               form.addEventListener('submit', function(event) {
-                  if (!form.checkValidity()) {
-                     event.preventDefault()
-                     event.stopPropagation()
-                  }
-                  form.classList.add('was-validated')
-               }, false)
-            })
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+         .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+               if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+               }
+               form.classList.add('was-validated')
+            }, false)
+         })
+
    </script>
    @yield('js')
 </body>

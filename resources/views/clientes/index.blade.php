@@ -24,14 +24,16 @@
          </div>
       </div>
       <table id="table" class="table table-sm mt-1" data-search="true">
-         <thead>
+         <thead class="small">
             <tr class="table-secondary">
+               <th data-field="tipo_doc">Tipo documento</th>
                <th data-field="documento">Documento</th>
-               <th data-sortable="true" data-field="nombres">Nombres</th>
-               <th data-field="apellidos">Apellidos</th>
-               <th data-sortable="true" data-field="correo">Correo electrónico</th>
-               <th data-sortable="true" data-field="telefono">Telefóno</th>
+               <th data-sortable="true" data-field="nombre_completo" data-formatter="validarCol">Nombre/Razón social
+               </th>
+               <th data-field="correo">Correo electrónico</th>
+               <th data-field="telefono">Telefóno</th>
                <th data-field="direccion" class="text-center">Dirección</th>
+               <th data-field="contacto" class="text-center">Contacto</th>
                <th data-field="acciones" data-formatter="validarCol">Acciones</th>
             </tr>
          </thead>
@@ -39,7 +41,9 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal" role="dialog" aria-hidden="true">
+
+<div class="modal fade" id="modal" role="dialog" aria-hidden="true"
+   tabindex="-1">
    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
          <div class="modal-header">
@@ -50,11 +54,29 @@
             <form id="frm" class="needs-validation" method="POST" novalidate>
                @csrf
                <div class="row mb-2">
+
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label for="tipo_doc">Tipo de documento</label>
+                        <div class="input-group">
+                           <select name="tipo_doc" class="form-select border-gray-300" id="tipo_doc" required>
+                              <option value="">Seleccione...</option>
+                              <option value="CC">Cédula de ciudadanía</option>
+                              <option value="CE">Cédula de extranjería</option>
+                              <option value="NIT">NIT</option>
+                           </select>
+                           @error('tipo_doc')
+                           <div class="invalid-feedback">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     </div>
+                  </div>
+
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="documento">Documento</label>
                         <div class="input-group">
-                           <input name="documento" type="text" class="form-control border-gray-300"
+                           <input name="documento" type="number" class="form-control border-gray-300"
                               placeholder="900818901" id="documento" autofocus required />
                            @error('documento')
                            <div class="invalid-feedback">{{ $message }}</div>
@@ -62,7 +84,21 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-3">
+
+                  <div class="col-md-2 d-none" id="divDiv">
+                     <div class="form-group">
+                        <label for="div">DIV</label>
+                        <div class="input-group">
+                           <input name="div" type="number" class="form-control border-gray-300" placeholder="8" id="div"
+                              min="0" max="9" oninput="this.value = this.value.slice(0, 1)" />
+                           @error('div')
+                           <div class="invalid-feedback">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="col-md-5" id="divNombres">
                      <div class="form-group">
                         <label for="nombres">Nombres</label>
                         <div class="input-group">
@@ -74,7 +110,37 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-3">
+               </div>
+
+               <div class="row mb-2">
+                  <div class="col-md-7 d-none" id="divRazon">
+                     <div class="form-group">
+                        <label for="razon_social">Razón social</label>
+                        <div class="input-group">
+                           <input name="razon_social" type="text" class="form-control border-gray-300"
+                              placeholder="Emrpesa de..." id="razon_social" autofocus />
+                           @error('razon_social')
+                           <div class="invalid-feedback">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-5 d-none" id="divContacto">
+                     <div class="form-group">
+                        <label for="contacto">Persona de Contacto</label>
+                        <div class="input-group">
+                           <input name="contacto" type="text" class="form-control border-gray-300"
+                              placeholder="Representante legal" id="contacto" autofocus />
+                           @error('contacto')
+                           <div class="invalid-feedback">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="row mb-2">
+                  <div class="col-md-4" id="divApellidos">
                      <div class="form-group">
                         <label for="apellidos">Apellidos</label>
                         <div class="input-group">
@@ -86,11 +152,12 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-3">
+
+                  <div class="col-md-3" id="divTelefono">
                      <div class="form-group">
                         <label for="telefono">Teléfono</label>
                         <div class="input-group">
-                           <input name="telefono" type="text" class="form-control border-gray-300"
+                           <input name="telefono" type="number" class="form-control border-gray-300"
                               placeholder="3125187874" id="telefono" autofocus required />
                            @error('telefono')
                            <div class="invalid-feedback">{{ $message }}</div>
@@ -98,9 +165,7 @@
                         </div>
                      </div>
                   </div>
-               </div>
-               <div class="row mb-2">
-                  <div class="col-md-6">
+                  <div class="col-md-5" id="divCorreo">
                      <div class="form-group">
                         <label for="correo">Correo electrónico</label>
                         <div class="input-group">
@@ -112,19 +177,22 @@
                         </div>
                      </div>
                   </div>
+               </div>
 
-                  <div class="col-md-6">
+               <div class="row mb-2">
+                  <div class="col-md-12">
                      <div class="form-group">
                         <label for="direccion">Dirección</label>
                         <div class="input-group">
                            <input name="direccion" type="text" class="form-control border-gray-300"
-                              placeholder="3125187874" id="direccion" autofocus />
+                              placeholder="calle 50 32..." id="direccion" autofocus />
                            @error('direccion')
                            <div class="invalid-feedback">{{ $message }}</div>
                            @enderror
                         </div>
                      </div>
                   </div>
+
                </div>
                <div class="d-grid float-right">
                   <input type="hidden" name="id" id="id" />
@@ -138,16 +206,14 @@
 
 @section('js')
 
-<script type="module">
+<script>
    const doc = document;
 
    let frm = doc.getElementById('frm');
-   let modal = new bootstrap.Modal(doc.getElementById('modal'), {
-      keyboard: false,
-      backdrop: 'static'
-   });
+   let modalElement = doc.getElementById('modal');
 
    doc.addEventListener('DOMContentLoaded', function () {
+
       $('#table').bootstrapTable({
 
          url: '/clientes/getAll',
@@ -160,45 +226,148 @@
             return 'Buscar...';
          },
       })
-   });
 
-   doc.addEventListener('click', (e) => {
-      if (e.target.matches('#btnRefresh') || e.target.closest('#btnRefresh')) {
-         $('#table').bootstrapTable('refresh');
-      }
+      doc.addEventListener('change', function (e) {
+         if (e.target.matches('#tipo_doc')) {
+            if (e.target.value == 'NIT') {
+               doc.getElementById('nombres').required = false;
+               doc.getElementById('apellidos').required = false;
+               doc.getElementById('nombres').value = "";
+               doc.getElementById('apellidos').value = "";
+               doc.getElementById('razon_social').required = true;
+               doc.getElementById('div').required = true;
+               doc.getElementById('razon_social').value = "";
+               doc.getElementById('div').value= "";
+               doc.getElementById('contacto').value= "";
 
-      if (e.target.matches('.btnNuevo') || e.target.closest('.btnNuevo')) {
-         modal.show();
-         document.querySelector('.modalTitulo').textContent = 'Nuevo registro'
-         document.querySelector('.btnGuardar').textContent = 'Guardar'
-         document.getElementById('id').value = ''
-      }
+               doc.getElementById('divNombres').classList.add('d-none');
+               doc.getElementById('divApellidos').classList.add('d-none');
+               doc.getElementById('divRazon').classList.remove('d-none');
+               doc.getElementById('divContacto').classList.remove('d-none');
+               doc.getElementById('divDiv').classList.remove('d-none');
+               doc.getElementById('divTelefono').classList.add('col-md-4');
+               doc.getElementById('divTelefono').classList.remove('col-md-3');
+               doc.getElementById('divCorreo').classList.add('col-md-8');
+               doc.getElementById('divCorreo').classList.remove('col-md-5');
+            } else {
+               doc.getElementById('nombres').required = true;
+               doc.getElementById('apellidos').required = true;
+               doc.getElementById('nombres').value = "";
+               doc.getElementById('apellidos').value = "";
+               doc.getElementById('razon_social').required = false;
+               doc.getElementById('div').required = false;
+               doc.getElementById('razon_social').value = "";
+               doc.getElementById('div').value= "";
+               doc.getElementById('contacto').value= "";
 
-      if (e.target.matches('.btnEliminar') || e.target.closest('.btnEliminar')) {
-         let id = e.target.dataset.id;
+               doc.getElementById('divContacto').classList.add('d-none');
+               doc.getElementById('divRazon').classList.add('d-none');
+               doc.getElementById('divDiv').classList.add('d-none');
+               doc.getElementById('divNombres').classList.remove('d-none');
+               doc.getElementById('divApellidos').classList.remove('d-none');
+               doc.getElementById('divTelefono').classList.remove('col-md-4');
+               doc.getElementById('divTelefono').classList.add('col-md-3');
+               doc.getElementById('divCorreo').classList.remove('col-md-8');
+               doc.getElementById('divCorreo').classList.add('col-md-5');
+            }
+         }
+      });
 
-         Swal.fire({
-            title: '¿Desea eliminar este registro?',
-            text: 'Esta acción no se puede revertir',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar'
-         }).then((result) => {
-            if (result.value) {
-               axios.delete(`/clientes/${id}/delete`)
+      doc.addEventListener('click', (e) => {
+         if (e.target.matches('#btnRefresh') || e.target.closest('#btnRefresh')) {
+            $('#table').bootstrapTable('refresh');
+         }
+
+         if (e.target.matches('.btnNuevo') || e.target.closest('.btnNuevo')) {
+            let modal = new bootstrap.Modal(modalElement, {
+            keyboard: false,
+            backdrop: 'static',
+            });
+            modal.show();
+            document.querySelector('.modalTitulo').textContent = 'Nuevo registro'
+            document.querySelector('.btnGuardar').textContent = 'Guardar'
+            document.getElementById('id').value = ''
+         }
+
+         if (e.target.matches('.btnEliminar') || e.target.closest('.btnEliminar')) {
+            let id = e.target.dataset.id;
+
+            Swal.fire({
+               title: '¿Desea eliminar este registro?',
+               text: 'Esta acción no se puede revertir',
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#d33',
+               cancelButtonColor: '#3085d6',
+               confirmButtonText: 'Sí, eliminar'
+            }).then((result) => {
+               if (result.value) {
+                  axios.delete(`/clientes/${id}/delete`)
+                     .then(function (response) {
+                        if (response.data.success) {
+                           Swal.fire({
+                              icon: 'success',
+                              title: 'Registro eliminado exitosamente',
+                              confirmButtonText: 'Aceptar',
+                           });
+                        } else {
+                           Swal.fire({
+                              icon: 'error',
+                              title: 'Error',
+                              confirmButtonText: 'Aceptar',
+                              text: response.data.message,
+                           });
+                        }
+                     })
+                     .catch(function (error) {
+                        console.error('Error en la solicitud:', error);
+                        Swal.fire({
+                           icon: 'error',
+                           title: 'Error',
+                           text: 'Hubo un problema al procesar la solicitud',
+                           confirmButtonText: 'Aceptar',
+                        });
+                     });
+                  $('#table').bootstrapTable('refresh');
+               }
+            })
+         }
+
+         if (e.target.matches('.btnGuardar') || e.target.closest('.btnGuardar')) {
+            if ($('#frm')[0].checkValidity()) {
+               e.preventDefault();
+
+               let formData = new FormData(frm);
+               let url = document.getElementById('id').value ? `/clientes/${document.getElementById('id').value}/update` : '/clientes';
+
+               axios(
+                  {
+                     method: 'post',
+                     url: url,
+                     data: formData,
+                  }
+               )
                   .then(function (response) {
                      if (response.data.success) {
                         Swal.fire({
                            icon: 'success',
-                           title: 'Registro eliminado exitosamente',
+                           title: 'Registro creado exitosamente',
                            confirmButtonText: 'Aceptar',
-                        });
+                           text: response.data.message,
+                           }).then(() => {
+                              $('.btn-close').click();
+                              frm.reset();
+                              doc.querySelector('.modalTitulo').textContent = 'Nuevo registro';
+                              doc.querySelector('.btnGuardar').textContent = 'Guardar';
+                              frm.classList.remove('was-validated');
+                              doc.getElementById('id').value = '';
+                              $('#table').bootstrapTable('refresh');
+
+                           });
                      } else {
                         Swal.fire({
                            icon: 'error',
-                           title: 'Error',
+                           title: 'Advertencia',
                            confirmButtonText: 'Aceptar',
                            text: response.data.message,
                         });
@@ -211,36 +380,41 @@
                         title: 'Error',
                         text: 'Hubo un problema al procesar la solicitud',
                         confirmButtonText: 'Aceptar',
+
                      });
                   });
-               $('#table').bootstrapTable('refresh');
+
+
             }
-         })
-      }
+         }
 
-      if (e.target.matches('.btnGuardar') || e.target.closest('.btnGuardar')) {
-         if ($('#frm')[0].checkValidity()) {
-            e.preventDefault();
+         if (e.target.matches('.btnActualizar') || e.target.closest('.btnActualizar')) {
+            let id = e.target.dataset.id;
 
-            let formData = new FormData(frm);
-            let url = document.getElementById('id').value ? `/clientes/${document.getElementById('id').value}/update` : '/clientes';
-
-            axios(
-               {
-                  method: 'post',
-                  url: url,
-                  data: formData,
-               }
-            )
+            axios.get(`/clientes/${id}/edit`)
                .then(function (response) {
-                  if (response.data.success) {
-                     Swal.fire({
-                        icon: 'success',
-                        title: 'Registro creado exitosamente',
-                        confirmButtonText: 'Aceptar',
-                        text: response.data.message,
+                  if (response.data.datos) {
+                     let modal = new bootstrap.Modal(modalElement, {
+                     keyboard: false,
+                     backdrop: 'static',
                      });
+                     modal.show();
+                     doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
+                     doc.querySelector('.btnGuardar').textContent = 'Actualizar'
+                     doc.getElementById('id').value = response.data.datos.id;
+                     doc.getElementById('tipo_doc').value = response.data.datos.tipo_doc;
 
+                     doc.getElementById('tipo_doc').dispatchEvent(new Event('change', { bubbles: true }));
+
+                     doc.getElementById('documento').value = response.data.datos.documento;
+                     doc.getElementById('div').value = response.data.datos.div;
+                     doc.getElementById('nombres').value = response.data.datos.nombres;
+                     doc.getElementById('apellidos').value = response.data.datos.apellidos;
+                     doc.getElementById('razon_social').value = response.data.datos.razon_social;
+                     doc.getElementById('correo').value = response.data.datos.correo;
+                     doc.getElementById('telefono').value = response.data.datos.telefono;
+                     doc.getElementById('direccion').value = response.data.datos.direccion;
+                     doc.getElementById('contacto').value = response.data.datos.contacto;
                   } else {
                      Swal.fire({
                         icon: 'error',
@@ -257,74 +431,36 @@
                      title: 'Error',
                      text: 'Hubo un problema al procesar la solicitud',
                      confirmButtonText: 'Aceptar',
-
                   });
                });
-            modal.hide();
-            $('#table').bootstrapTable('refresh');
+               doc.getElementById('tipo_doc').dispatchEvent(new Event('change'));
          }
-      }
+      });
 
-      if (e.target.matches('.btnActualizar') || e.target.closest('.btnActualizar')) {
-         let id = e.target.dataset.id;
+      doc.addEventListener('click', function (e) {
+         if (e.target.matches('.btn-cerrar') || e.target.closest('.btn-cerrar')) {
+            frm.reset();
+            document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
+            document.querySelector('.btnGuardar').textContent = 'Guardar';
+            frm.classList.remove('was-validated');
+            document.getElementById('id').value = '';
+         }
+      });
 
-         axios.get(`/clientes/${id}/edit`)
-            .then(function (response) {
-               if (response.data.datos) {
-                  modal.show();
-                  doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
-                  doc.querySelector('.btnGuardar').textContent = 'Actualizar'
-                  doc.getElementById('id').value = response.data.datos.id;
-                  doc.getElementById('documento').value = response.data.datos.documento;
-                  doc.getElementById('nombres').value = response.data.datos.nombres;
-                  doc.getElementById('apellidos').value = response.data.datos.apellidos;
-                  doc.getElementById('correo').value = response.data.datos.correo;
-                  doc.getElementById('telefono').value = response.data.datos.telefono;
-                  doc.getElementById('direccion').value = response.data.datos.direccion;
-               } else {
-                  Swal.fire({
-                     icon: 'error',
-                     title: 'Error',
-                     confirmButtonText: 'Aceptar',
-                     text: response.data.message,
-                  });
-                  modal.hdie();
-               }
-            })
-            .catch(function (error) {
-               console.error('Error en la solicitud:', error);
-               Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'Hubo un problema al procesar la solicitud',
-                  confirmButtonText: 'Aceptar',
-               });
-            });
-      }
-   });
-
-   doc.addEventListener('click', function (e) {
-      if (e.target.matches('.btn-cerrar') || e.target.matches('#modal') || e.target.closest('.btn-cerrar')) {
+      modalElement.addEventListener('hidden.bs.modal', event => {
          frm.reset();
          document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
          document.querySelector('.btnGuardar').textContent = 'Guardar';
          frm.classList.remove('was-validated');
          document.getElementById('id').value = '';
-         modal.hide();
-      }
-   });
-
-   $('#modal').on('hidden.bs.modal', function () {
-      frm.reset();
-      document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
-      document.querySelector('.btnGuardar').textContent = 'Guardar';
-      frm.classList.remove('was-validated');
-      document.getElementById('id').value = '';
+      })
    });
 </script>
 
 <script>
    function validarCol(value, row, index, field) {
+      let $table = $('#table')
+
       if (field == 'acciones') {
          return `<button data-id="${row.id}" type="button" class="btn btn-sm btn-warning btnActualizar">
                <i data-id="${row.id}" class="bi bi-pencil"></i>
@@ -332,6 +468,13 @@
             <button data-id="${row.id}" type="button" class="btn btn-sm btnEliminar btn-danger"">
                <i data-id="${row.id}" class="bi bi-trash"></i>
             </button>`;
+      }
+      if (field == 'nombre_completo') {
+         if(row.tipo_doc=='NIT'){
+            return row.razon_social;
+         }else{
+            return row.nombres + ' ' + row.apellidos;
+         }
       }
    }
 </script>

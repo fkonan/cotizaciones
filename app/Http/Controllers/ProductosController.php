@@ -18,6 +18,7 @@ class ProductosController extends Controller
          $datos = new Productos();
          $datos->producto = $request->producto;
          $datos->valor = $request->valor;
+         $datos->frecuencia_dias = $request->frecuencia_dias;
 
          if ($request->hasFile('foto')) {
             $file = $request->file('foto');
@@ -52,6 +53,7 @@ class ProductosController extends Controller
       if ($datos = Productos::find($id)) {
          $datos->producto = $request->producto;
          $datos->valor = $request->valor;
+         $datos->frecuencia_dias = $request->frecuencia_dias;
 
          if ($request->hasFile('foto')) {
             if ($datos->foto && file_exists(public_path('images/productos/' . $datos->logo))) {

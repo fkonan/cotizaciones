@@ -159,7 +159,7 @@
                </td>
                <td>{{ $producto['producto_nombre'] }}</td>
                <td>{{ $producto['cantidad'] }}</td>
-               <td>{{ $producto['producto_frecuencia'] }}</td>
+               <td>28</td>
                <td>$ {{ number_format($producto['valor'],2) }}</td>
                <td>$ {{ number_format($producto['total'],2) }}</td>
             </tr>
@@ -227,10 +227,8 @@
             </tr>
          </table>
       </div>
-      @if (count($productos)<3)
 
-      <div class="page-break"></div>
-      @endif
+      {{-- <div class="page-break"></div> --}}
 
       <div class="content">
          <h3 style="color:#002071;">CONDICIONES COMERCIALES:</h3>
@@ -240,7 +238,7 @@
                   venta.</b>
             </li>
             <li>
-               <b style="color:#002071;">La condición de pago:</b> Contado/30 dias
+               <b style="color:#002071;">La condición de pago:</b> Contado
             </li>
             <li>
                El pago de la <b style="color:#002071;">Factura es Mensual</b>, lo pueden realizar por transferencia
@@ -366,6 +364,98 @@
       </table>
    </div>
 
+   {{-- <div class="page-break"></div> --}}
+
+   <div class="content" style="padding-left:30px;padding-right:30px;">
+      <br>
+      <center>
+         <h3>ALGUNOS DE NUESTROS CLIENTES QUE CORRESPONDEN A OTROS SECTORES</h3>
+      </center>
+      <div style="text-align: center;">
+         <table width="100%" border="0" cellspacing="0" cellpadding="10">
+            <tr>
+               <td valign="top" width="50%">
+                  <ul style=" list-style-type: none; padding-left: 0;font-size: 11px;">
+                     <li>MEDICLINICOS</li>
+                     <li>RUTAL DEL CACAO</li>
+                     <li>IPS CABECERA</li>
+                     <li>MEDICUC IPS LTDA</li>
+                     <li>CLUB DEL COMERCIO</li>
+                     <li>HOSPITAL PSIQUIATRICO SAN CAMILO</li>
+                     <li>CENTRO COMERCIAL CACIQUE</li>
+                     <li>CENTRO COMERCIAL PARQUE CARACOLI</li>
+                     <li>CENTRO COMERCIAL PANAMA</li>
+                     <li>CENTRO COMERCIAL EL PUENTE</li>
+                     <li>CLINICA DE LA POLICIA</li>
+                     <li>RESTAURANTE PAL CAMINITO S.A.S</li>
+                     <li>CENTRO COMERCIAL LA FLORIDA</li>
+                     <li>BOMBEROS</li>
+                     <li>CENTRO COMERCIAL MEGAMALL</li>
+                     <li>MISION CARISMATICA BARRANCABERMEJA</li>
+                     <li>DE LA FE FUNERARIA BARRANCA</li>
+                     <li>COLEGIO PRESENTACIÓN</li>
+                     <li>NEOMUNDO</li>
+                     <li>EMPAS</li>
+                     <li>CENTRO COMERCIAL VIVA BARRANCABERMEJA</li>
+                     <li>ESSA</li>
+                     <li>CLINICA FOSUNAB</li>
+                     <li>FUNDACION CARDIO VASCULAR DE COLOMBIA</li>
+                     <li>ASOPORMEN</li>
+                     <li>UISALUD</li>
+                     <li>UNIVERSIDAD MANUELA BELTRAN</li>
+                     <li>FUNERARIA LOS OLIVOS BUCARAMANGA</li>
+                     <li>CAMPESTRE</li>
+                     <li>HOTEL PUNTA DIAMANTE</li>
+                     <li>COMERCIAL NUTRESA S.A.S</li>
+                     <li>URBANAS</li>
+                     <li>AVIDESA MAC POLLO S.A.</li>
+                     <li>FENALCO</li>
+                     <li>COPETRAN</li>
+                  </ul>
+               </td>
+               <td valign="top" width="59%">
+                  <ul style=" list-style-type: none; padding-left: 0;font-size: 12px;">
+                     <li>CONJUNTO RESIDENCIAL CAMINOS DE PROVVIDENZA</li>
+                     <li>HOSPITAL UNIVERSITARIO DE SANTANDER</li>
+                     <li>HIGUERA ESCALANTE</li>
+                     <li>CLUB CAMPESTRE</li>
+                     <li>GRUPO MANEJAR GREEN GOLD</li>
+                     <li>LOS COMUNEROS HOSPITAL UNIVERSITARIO</li>
+                     <li>CLINICA FOSCAL INTERNACIONAL COMPLEJO</li>
+                     <li>CENTRO COMERCIAL DE LA CUESTA</li>
+                     <li>CENTRO COMERCIAL ACROPOLIS</li>
+                     <li>COCA COLA</li>
+                     <li>CENTRO MEDICO CARLOS ARDILA LULE</li>
+                     <li>CENTRO COMERCIAL Y V ETAPA</li>
+                     <li>HOSPITAL INTERNACIONAL DE COLOMBIA</li>
+                     <li>COMANDO DE LA POLICIA DE BARRANCABER</li>
+                     <li>EDIFICIO CENTRO MEDICO CLI NICA BUCARAM IGLESIA</li>
+                     <li>CENTRO FAMILIAR DE ADORACION BARRANC CAPILLA</li>
+                     <li>FUNERARIA LOS OLIVOS BARRANCA</li>
+                     <li>COLEGIO PANAMERICANO</li>
+                     <li>HIPINTO BARRANCABERMEJA</li>
+                     <li>IGLESIA EMBAJADORES DE CRISTO</li>
+                     <li>CACIQUE EL CENTRO COMERCIAL Y DE NEGOC</li>
+                     <li>CAMARA DE COMERCIO</li>
+                     <li>COMFENALCO</li>
+                     <li>CENTRO MEDICA CARLOS ARDILA LULLE IPS</li>
+                     <li>IPS CABECERA</li>
+                     <li>CAJASAN</li>
+                     <li>NORGAS</li>
+                     <li>CENTRO COMERCIAL Y EMPRESARIAL SAN SIL CLUB</li>
+                     <li>INCUBADORA DE SANTANDER</li>
+                     <li>ITALCOL SA</li>
+                     <li>HOTEL HOLIDAY INN</li>
+                     <li>COCA COLA</li>
+                     <li>MARVAL</li>
+                     <li>DISTRAVES SAS</li>
+                     <li>VIFENALCO</li>
+                  </ul>
+               </td>
+            </tr>
+         </table>
+      </div>
+   </div>
 </body>
 
 </html>

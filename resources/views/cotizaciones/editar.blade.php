@@ -11,7 +11,7 @@
       padding: 2px;
       position: relative;
       z-index: 1;
-      font-size:13px;
+      font-size: 13px;
    }
 </style>
 @endsection
@@ -21,12 +21,13 @@
    <div class="card-header">
       <div class="row mb-2">
          <div class="col">
-            <h5 class="mb-0">Nueva cotización</h5>
+            <h5 class="mb-0">Editar cotización</h5>
          </div>
       </div>
    </div>
    <form id="frm" class="needs-validation" method="POST" novalidate>
       @csrf
+      <input type="hidden" class="form-control" name="id" id="id" value="{{$datos->id}}">
       <div class="card-body">
          <div class="row mb-2">
             <div class="col-md-3">
@@ -34,7 +35,7 @@
                   <label for="fecha">Fecha de la cotización</label>
                   <div class="input-group">
                      <input name="fecha" type="text" class="form-control" placeholder="01/01/2024" id="fecha" autofocus
-                        required value="{{date('d/m/Y')}}" readonly />
+                        required value="{{$datos->fecha}}" readonly />
                      @error('fecha')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
@@ -48,7 +49,8 @@
                      <select name="cliente_id" class="form-select" id="cliente_id" required>
                         <option value="">Seleccione...</option>
                         @foreach ($clientes as $cliente)
-                        <option value="{{ $cliente->id }}" data-correo="{{$cliente->correo}}">{{ $cliente->documento }}
+                        <option {{$cliente->id==$datos->cliente_id?"selected":""}} value="{{ $cliente->id }}"
+                           data-correo="{{$cliente->correo}}">{{ $cliente->documento }}
                            - {{ $cliente->tipo_doc == 'NIT' ? $cliente->razon_social : ($cliente->nombres . ' ' .
                            $cliente->apellidos) }}
                         </option>
@@ -84,8 +86,7 @@
                <div class="form-group">
                   <label for="cantidad">Cantidad</label>
                   <div class="input-group">
-                     <input name="cantidad" type="number" min="1" max="999" class="form-control" id="cantidad" autofocus
-                        required />
+                     <input name="cantidad" type="number" class="form-control" id="cantidad" autofocus required />
                      @error('cantidad')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
@@ -94,9 +95,8 @@
             </div>
             <div class="col-md-2">
                <div class="form-group">
-                  <label for="valor" style="float: left;">Precio</label>
-                  <span id="tip_valor" style="float: right; visibility: hidden;"
-                     class="ttip-grid">500,000</span>
+                  <label for="valor">Precio</label>
+                  <span id="tip_valor" style="float: right; visibility: hidden;" class="ttip-grid">500,000</span>
                   <div class="input-group">
                      <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
                      @error('valor')
@@ -162,30 +162,29 @@
                   </div>
                </div>
             </div>
-            <div class="col-2"></div>
-            <div class="col-md-4 text-end mt-2">
+            <div class="col-md-6 text-end mt-2">
                <div class="form-group">
-                  <label for="subtotal" style="display: flex;justify-content:end;align-items: baseline;">
-                     <h4>SubTotal: </h4>
-                     <input name="subtotal" type="text" class="border-0 text-start fs-3 w-50" style="height: 40px;" id="subtotal" readonly>
+                  <label for="subtotal" style="display: flex;justify-content:end;">
+                     <h3>SubTotal: </h3>
+                     <input name="subtotal" type="text" class="border-0 text-end display-6 w-50" id="subtotal" readonly>
                   </label>
-                  <label for="descuento" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
-                     <h4>Dcto (%):</h4>
-                     <input name="descuento" type="number" min="0" max="100" class="border-0 text-start fs-3 w-50"style="height: 40px;"
+                  <label for="descuento" class="mt-2" style="display: flex;justify-content:end;">
+                     <h3>Dcto (%):</h3>
+                     <input name="descuento" type="number" min="0" max="100" class="border-0 text-end display-6 w-50"
                         id="descuento">
                   </label>
-                  <label for="subtotal2" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
-                     <h4>Subtotal:</h4>
-                     <input name="subtotal2" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="subtotal2"
+                  <label for="subtotal2" class="mt-2" style="display: flex;justify-content:end;">
+                     <h3>Subtotal:</h3>
+                     <input name="subtotal2" type="text" class="border-0 text-end display-6 w-50" id="subtotal2"
                         readonly>
                   </label>
-                  <label for="iva" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
-                     <h4>Iva (19%):</h4>
-                     <input name="iva" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="iva" readonly>
+                  <label for="iva" class="mt-2" style="display: flex;justify-content:end;">
+                     <h3>Iva (19%):</h3>
+                     <input name="iva" type="text" class="border-0 text-end display-6 w-50" id="iva" readonly>
                   </label>
-                  <label for="total" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
-                     <h4>Total a pagar:</h4>
-                     <input name="total_pagar" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="total_pagar"
+                  <label for="total" class="mt-2" style="display: flex;justify-content:end;">
+                     <h3>Total a pagar:</h3>
+                     <input name="total_pagar" type="text" class="border-0 text-end display-6 w-50" id="total_pagar"
                         readonly>
                   </label>
                </div>
@@ -209,15 +208,34 @@
    const doc = document;
    const PRODUCTOS_VENTA = [];
 
+   const datos=@php echo json_encode($datos); @endphp;
    let cantidad = doc.getElementById('cantidad');
    let descuento = doc.getElementById('descuento');
 
    doc.addEventListener('DOMContentLoaded', function () {
 
+      datos.cotizacion_detalles.forEach((item, index) => {
+         const nuevoProducto = {
+            id: index + 1,
+            producto_id: item.producto_id,
+            producto_nombre: item.producto.producto,
+            producto_foto: item.producto.foto,
+            producto_frecuencia: item.producto.frecuencia_dias,
+            valor: item.valor,
+            cantidad: item.cantidad,
+            total:item.subtotal,
+            neto_pagar: item.total,
+         };
+
+         PRODUCTOS_VENTA.push(nuevoProducto);
+         descuento.value=datos.descuento;
+      });
+
+      actualizarTabla();
+
       $('#cliente_id').select2();
 
       $('#tabla_productos').bootstrapTable({
-
          formatNoMatches: function () {
             return 'No se encontraron registros';
          },
@@ -238,7 +256,7 @@
                   valor: doc.getElementById('valor').value,
                   cantidad: cantidad.value,
                   total: doc.getElementById('total').value.replace(/\$|\.|,/g, '').trim(),
-                  neto_pagar: parseFloat(doc.getElementById('total').value.replace(/\$|\.|,/g, '').trim()),
+                  neto_pagar: parseFloat(doc.getElementById('total').value),
                };
 
                PRODUCTOS_VENTA.push(nuevoProducto);
@@ -251,7 +269,6 @@
                return PRODUCTOS_VENTA;
             }
          }
-
       });
 
       doc.addEventListener('change', (e) => {
@@ -262,10 +279,10 @@
             let valor = opcion.dataset.valor ? opcion.dataset.valor : 0;
             let tipValor=opcion.dataset.valor ? opcion.dataset.valor : 0;
             if(valor>0){
-               $("#tip_valor").text(numberFormat(valor));
-               $("#tip_valor").css("visibility" , "visible");
+            $("#tip_valor").text(numberFormat(valor));
+            $("#tip_valor").css("visibility" , "visible");
             }else{
-               $("#tip_valor").css("visibility" , "hidden");
+            $("#tip_valor").css("visibility" , "hidden");
             }
             doc.getElementById('valor').value = valor;
 
@@ -273,28 +290,32 @@
          }
 
          if (e.target.matches('#cantidad') || e.target.matches('#valor')) {
+         let valor = doc.getElementById('valor').value
+         calcularSubtotal(valor, cantidad.value ? cantidad.value : 0, descuento.value ? descuento.value : 0);
+         let tipValor=valor;
+         if(valor>0){
+         $("#tip_valor").text(numberFormat(valor));
+         $("#tip_valor").css("visibility" , "visible");
+         }else{
+         $("#tip_valor").css("visibility" , "hidden");
+         }
+         }
+
+
+         if (e.target.matches('#cantidad') || e.target.matches('#valor')) {
             let valor = doc.getElementById('valor').value
             calcularSubtotal(valor, cantidad.value ? cantidad.value : 0, descuento.value ? descuento.value : 0);
-            let tipValor=valor;
-            if(valor>0){
-            $("#tip_valor").text(numberFormat(valor));
-            $("#tip_valor").css("visibility" , "visible");
-            }else{
-            $("#tip_valor").css("visibility" , "hidden");
-            }
          }
 
          if (e.target.matches('#descuento')) {
             calcularTotal(PRODUCTOS_VENTA.neto_pagar);
          }
 
-
-      });
-
-      $('#cliente_id').on('change', function(e) {
-      let opcion = this.options[this.selectedIndex];
-      let correo = opcion.dataset.correo ? opcion.dataset.correo : 'SIN CORREO';
-      $('#correo').val(correo);
+         if (e.target.matches('#cliente_id')) {
+            let opcion = e.target.options[e.target.selectedIndex];
+            let correo = opcion.dataset.correo ? opcion.dataset.correo : 'SIN CORREO';
+            doc.getElementById('correo').value = correo;
+         }
       });
 
       let frm = doc.getElementById('frm');
@@ -311,7 +332,7 @@
             return;
          }
          let formData = new FormData(frm);
-         let url = '/cotizaciones';
+         let url = '/cotizaciones/update';
 
          Swal.fire({
             title: "¿Esta seguro de realizar esta transaccion?",
@@ -329,10 +350,10 @@
                document.getElementById('btn_guardar').disabled = true;
                let datos = Object.fromEntries(formData);
                let insert = {
+                  "id": doc.getElementById('id').value,
                   "cliente_id": datos.cliente_id,
                   "enviar_correo": datos.enviar_correo,
                   "correo": datos.correo,
-                  "cliente_id": datos.cliente_id,
                   "fecha": datos.fecha,
                   "subtotal": datos.subtotal.replace(/\$|\.|,/g, '').trim(),
                   "descuento": datos.descuento.replace(/\$|\.|,/g, '').trim(),
@@ -388,9 +409,15 @@
                   });
             }
          });
-
       });
    });
+
+   doc.getElementById('tbody').addEventListener('click', function(e) {
+      if (e.target.closest('.btnEliminar')) {
+         eliminarProducto(e);
+      }
+   });
+
 </script>
 <script>
    function numberFormat(nStr) {
@@ -469,17 +496,15 @@
       });
 
       PRODUCTOS_VENTA.neto_pagar = neto_pagar;
-      let btnEliminar = document.querySelectorAll('.btnEliminar');
+
       doc.getElementById('subtotal').value = neto_pagar;
       calcularTotal(neto_pagar);
-      btnEliminar.forEach(btn => {
-         btn.addEventListener('click', eliminarProducto);
-      });
    }
 
    function eliminarProducto(e) {
-      const id = parseInt(e.target.dataset.id);
+      const id = parseInt(e.target.closest('.btnEliminar').dataset.id);
       const idEliminar = PRODUCTOS_VENTA.findIndex(producto => producto.id === id);
+
       if (idEliminar !== -1) {
          PRODUCTOS_VENTA.splice(idEliminar, 1);
          actualizarTabla();
@@ -490,9 +515,10 @@
       doc.getElementById('producto_id').dispatchEvent(event);
    }
 
-   function moneyFormat(value) {
-      let valueConversion = new Intl.NumberFormat("es-CO", { style: "currency", currency: 'COP', minimumFractionDigits: 0 }).format(value);
-      return valueConversion.replace(' ', '');
-   }
+ function moneyFormat(value) {
+let valueConversion = new Intl.NumberFormat("es-CO", { style: "currency", currency: 'COP', minimumFractionDigits: 0
+}).format(value);
+return valueConversion.replace(' ', '');
+}
 </script>
 @endsection

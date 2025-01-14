@@ -17,9 +17,7 @@ class CotizacionesDetalle extends Model
       'cantidad',
       'valor',
       'subtotal',
-      'descuento',
       'total',
-      'iva',
    ];
 
    public function cotizacion()
