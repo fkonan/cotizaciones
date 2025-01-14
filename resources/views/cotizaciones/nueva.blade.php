@@ -1,6 +1,19 @@
 @extends('layouts.app')
 @section('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+   .ttip-grid {
+      background: #00206f;
+      border: 2px solid #00206f;
+      color: white;
+      top: -8px;
+      border-radius: 6px;
+      padding: 2px;
+      position: relative;
+      z-index: 1;
+      font-size:13px;
+   }
+</style>
 @endsection
 @section('content')
 
@@ -36,7 +49,8 @@
                         <option value="">Seleccione...</option>
                         @foreach ($clientes as $cliente)
                         <option value="{{ $cliente->id }}" data-correo="{{$cliente->correo}}">{{ $cliente->documento }}
-                           - {{ $cliente->tipo_doc == 'NIT' ? $cliente->razon_social : ($cliente->nombres . ' ' . $cliente->apellidos) }}
+                           - {{ $cliente->tipo_doc == 'NIT' ? $cliente->razon_social : ($cliente->nombres . ' ' .
+                           $cliente->apellidos) }}
                         </option>
                         @endforeach
                      </select>
@@ -56,21 +70,11 @@
                      <select name="producto_id" class="form-select" id="producto_id" required>
                         <option value="">Seleccione...</option>
                         @foreach ($productos as $item)
-                        <option data-valor="{{ $item->valor }}" data-foto="{{$item->foto}}" value="{{ $item->id }}">{{ $item->producto }}</option>
+                        <option data-valor="{{ $item->valor }}" data-foto="{{$item->foto}}" data-frecuencia="{{$item->frecuencia_dias}}" value="{{ $item->id }}">{{
+                           $item->producto }}</option>
                         @endforeach
                      </select>
                      @error('producto_id')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-2">
-               <div class="form-group">
-                  <label for="valor">Valor</label>
-                  <div class="input-group">
-                     <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
-                     @error('valor')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
                   </div>
@@ -94,8 +98,8 @@
                   <span id="tip_valor" style="float: right; visibility: hidden;"
                      class="ttip-grid">500,000</span>
                   <div class="input-group">
-                     <input name="subtotal" type="number" class="form-control" id="subtotal" required readonly />
-                     @error('subtotal')
+                     <input name="valor" type="number" class="form-control" placeholder="1000" id="valor" required />
+                     @error('valor')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
                   </div>
@@ -161,19 +165,27 @@
             <div class="col-2"></div>
             <div class="col-md-4 text-end mt-2">
                <div class="form-group">
-                  <label for="subtotal">
-                     <h3>SubTotal:</h3>
-                     <input name="subtotal" type="text" class="border-0 text-end display-6" id="subtotal"
+                  <label for="subtotal" style="display: flex;justify-content:end;align-items: baseline;">
+                     <h4>SubTotal: </h4>
+                     <input name="subtotal" type="text" class="border-0 text-start fs-3 w-50" style="height: 40px;" id="subtotal" readonly>
+                  </label>
+                  <label for="descuento" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
+                     <h4>Dcto (%):</h4>
+                     <input name="descuento" type="number" min="0" max="100" class="border-0 text-start fs-3 w-50"style="height: 40px;"
+                        id="descuento">
+                  </label>
+                  <label for="subtotal2" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
+                     <h4>Subtotal:</h4>
+                     <input name="subtotal2" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="subtotal2"
                         readonly>
                   </label>
-                  <label for="descuento">
-                     <h3>Descuento:</h3>
-                     <input name="descuento" type="text" class="border-0 text-end display-6" id="descuento"
-                        readonly>
+                  <label for="iva" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
+                     <h4>Iva (19%):</h4>
+                     <input name="iva" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="iva" readonly>
                   </label>
-                  <label for="total">
-                     <h3>Total a pagar:</h3>
-                     <input name="total" type="text" class="border-0 text-end display-6" id="total"
+                  <label for="total" class="mt-2" style="display: flex;justify-content:end;align-items: baseline;">
+                     <h4>Total a pagar:</h4>
+                     <input name="total_pagar" type="text" class="border-0 text-start fs-3 w-50"style="height: 40px;" id="total_pagar"
                         readonly>
                   </label>
                </div>
@@ -222,6 +234,7 @@
                   producto_id: doc.getElementById('producto_id').value,
                   producto_nombre: producto,
                   producto_foto: doc.getElementById('producto_id').options[doc.getElementById('producto_id').selectedIndex].dataset.foto,
+                  producto_frecuencia: doc.getElementById('producto_id').options[doc.getElementById('producto_id').selectedIndex].dataset.frecuencia,
                   valor: doc.getElementById('valor').value,
                   cantidad: cantidad.value,
                   total: doc.getElementById('total').value.replace(/\$|\.|,/g, '').trim(),
@@ -373,9 +386,6 @@
 
                      document.getElementById('btn_guardar').disabled = false;
                   });
-
-                     document.getElementById('btn_guardar').disabled = false;
-                  });
             }
          });
 
@@ -414,10 +424,22 @@
 
    function calcularSubtotal(valor, cantidad, descuento) {
       let subtotal = cantidad * valor;
-      let total = subtotal - (subtotal * (descuento / 100));
-      //let total = subtotal - descuento;
-      doc.getElementById('subtotal').value = subtotal;
-      doc.getElementById('total').value = total;
+      doc.getElementById('total').value = `${moneyFormat(parseFloat(subtotal))}`;
+   }
+
+   function calcularTotal(neto_pagar) {
+      let subtotal = doc.getElementById('subtotal').value ? doc.getElementById('subtotal').value.replace(/\$|\.|,/g, '').trim() : neto_pagar;
+      let descuento = doc.getElementById('descuento').value ? doc.getElementById('descuento').value : 0;
+      let subtotal2 = subtotal - (subtotal * (descuento / 100));
+      let iva = subtotal2 * 0.19;
+      let total_pagar = subtotal2 + iva;
+
+
+      doc.getElementById('subtotal').value = `${moneyFormat(parseFloat(subtotal))}`;
+      doc.getElementById('subtotal2').value = `${moneyFormat(parseFloat(subtotal2))}`;
+      doc.getElementById('iva').value = `${moneyFormat(parseFloat(iva))}`;
+      doc.getElementById('total_pagar').value = `${moneyFormat(parseFloat(total_pagar))}`;
+      PRODUCTOS_VENTA.neto_pagar = parseFloat(total_pagar);
    }
 
    function actualizarTabla() {
@@ -431,8 +453,6 @@
          <td>${producto.producto_nombre}</td>
          <td>${producto.cantidad}</td>
          <td>${moneyFormat(producto.valor)}</td>
-         <td>${moneyFormat(producto.subtotal)}</td>
-         <td>${(producto.descuento)}%</td>
          <td>${moneyFormat(producto.total)}</td>
          <td>
             <button type="button" class="btn btn-danger d-inline-flex align-items-center btnEliminar"
