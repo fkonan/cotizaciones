@@ -28,8 +28,6 @@
                <th data-field="fecha">Fecha de la cotización</th>
                <th data-field="subtotal" data-formatter="validarCol">Sub-total</th>
                <th data-field="descuento" data-formatter="validarCol">Descuento (%)</th>
-               <th data-field="subtotal2" data-formatter="validarCol">Sub-total</th>
-               <th data-field="iva" data-formatter="validarCol">Iva</th>
                <th data-field="total" data-formatter="validarCol">Total</th>
                <th data-field="pdf" data-formatter="validarCol">Archivo pdf</th>
                <th data-field="acciones" data-formatter="validarCol">Acciones</th>
@@ -274,21 +272,19 @@
             <a data-id="${row.id}" href="/cotizaciones/${row.id}/edit" type="button" class="btn btn-sm btnActualizar btn-warning"">
                <i data-id=" ${row.id}" class="bi bi-pencil"></i>
             </a>
-
             <button data-id="${row.id}" type="button" class="btn btn-sm btnEliminar btn-danger"">
                <i data-id="${row.id}" class="bi bi-trash"></i>
             </a>
-         `;
+            `;
       }
 
       if (field == 'cliente') {
          return row.cliente.tipo_doc=='NIT'?`${row.cliente.razon_social}`:`${row.cliente.nombres} ${row.cliente.apellidos}`;
       }
 
-      if (field == 'subtotal' || field == 'total' || field == 'iva'|| field == 'subtotal2' ) {
+      if (field == 'subtotal' || field == 'total' ) {
          return `${moneyFormat(value)}`;
       }
-
 
       if (field == 'descuento') {
          return `${value}%`;
@@ -314,6 +310,8 @@
                <th>Producto</th>
                <th>Cantidad</th>
                <th>Valor</th>
+               <th>Sub-total</th>
+               <th>Descuento (%)</th>
                <th>Total</th>
             </tr>
          </thead>
@@ -324,6 +322,8 @@
             <td>${item.producto.producto}</td>
             <td>${item.cantidad}</td>
             <td>${moneyFormat(item.valor)}</td>
+            <td>${moneyFormat(item.subtotal)}</td>
+            <td>${item.descuento}%</td>
             <td>${moneyFormat(item.total)}</td>
          </tr>`;
       });

@@ -28,8 +28,7 @@
             <tr class="table-secondary">
                <th data-field="tipo_doc">Tipo documento</th>
                <th data-field="documento">Documento</th>
-               <th data-sortable="true" data-field="nombre_completo" data-formatter="validarCol">Nombre/Razón social
-               </th>
+               <th data-sortable="true" data-field="nombre_completo" data-formatter="validarCol">Nombre/Razón social</th>
                <th data-field="correo">Correo electrónico</th>
                <th data-field="telefono">Telefóno</th>
                <th data-field="direccion" class="text-center">Dirección</th>
@@ -89,8 +88,8 @@
                      <div class="form-group">
                         <label for="div">DIV</label>
                         <div class="input-group">
-                           <input name="div" type="number" class="form-control border-gray-300" placeholder="8" id="div"
-                              min="0" max="9" oninput="this.value = this.value.slice(0, 1)" />
+                           <input name="div" type="text" class="form-control border-gray-300"
+                              placeholder="8" id="div" />
                            @error('div')
                            <div class="invalid-feedback">{{ $message }}</div>
                            @enderror
@@ -127,7 +126,7 @@
                   </div>
                   <div class="col-md-5 d-none" id="divContacto">
                      <div class="form-group">
-                        <label for="contacto">Persona de Contacto</label>
+                        <label for="contacto">Contacto</label>
                         <div class="input-group">
                            <input name="contacto" type="text" class="form-control border-gray-300"
                               placeholder="Representante legal" id="contacto" autofocus />
@@ -227,18 +226,56 @@
          },
       })
 
-      doc.addEventListener('change', function (e) {
-         if (e.target.matches('#tipo_doc')) {
-            if (e.target.value == 'NIT') {
-               doc.getElementById('nombres').required = false;
-               doc.getElementById('apellidos').required = false;
-               doc.getElementById('nombres').value = "";
-               doc.getElementById('apellidos').value = "";
-               doc.getElementById('razon_social').required = true;
-               doc.getElementById('div').required = true;
-               doc.getElementById('razon_social').value = "";
-               doc.getElementById('div').value= "";
-               doc.getElementById('contacto').value= "";
+   doc.addEventListener('change', function (e) {
+      if (e.target.matches('#tipo_doc')) {
+         if (e.target.value == 'NIT') {
+            doc.getElementById('nombres').required = false;
+            doc.getElementById('apellidos').required = false;
+            doc.getElementById('nombres').value = "";
+            doc.getElementById('apellidos').value = "";
+            doc.getElementById('razon_social').required = true;
+            doc.getElementById('div').required = true;
+            doc.getElementById('razon_social').value = "";
+            doc.getElementById('div').value= "";
+            doc.getElementById('contacto').value= "";
+
+            doc.getElementById('divNombres').classList.add('d-none');
+            doc.getElementById('divApellidos').classList.add('d-none');
+            doc.getElementById('divRazon').classList.remove('d-none');
+            doc.getElementById('divContacto').classList.remove('d-none');
+            doc.getElementById('divDiv').classList.remove('d-none');
+            doc.getElementById('divTelefono').classList.add('col-md-4');
+            doc.getElementById('divTelefono').classList.remove('col-md-3');
+            doc.getElementById('divCorreo').classList.add('col-md-8');
+            doc.getElementById('divCorreo').classList.remove('col-md-5');
+         } else {
+            doc.getElementById('nombres').required = true;
+            doc.getElementById('apellidos').required = true;
+            doc.getElementById('nombres').value = "";
+            doc.getElementById('apellidos').value = "";
+            doc.getElementById('razon_social').required = false;
+            doc.getElementById('div').required = false;
+            doc.getElementById('razon_social').value = "";
+            doc.getElementById('div').value= "";
+            doc.getElementById('contacto').value= "";
+
+            doc.getElementById('divContacto').classList.add('d-none');
+            doc.getElementById('divRazon').classList.add('d-none');
+            doc.getElementById('divDiv').classList.add('d-none');
+            doc.getElementById('divNombres').classList.remove('d-none');
+            doc.getElementById('divApellidos').classList.remove('d-none');
+            doc.getElementById('divTelefono').classList.remove('col-md-4');
+            doc.getElementById('divTelefono').classList.add('col-md-3');
+            doc.getElementById('divCorreo').classList.remove('col-md-8');
+            doc.getElementById('divCorreo').classList.add('col-md-5');
+         }
+      }
+   });
+
+   doc.addEventListener('click', (e) => {
+      if (e.target.matches('#btnRefresh') || e.target.closest('#btnRefresh')) {
+         $('#table').bootstrapTable('refresh');
+      }
 
                doc.getElementById('divNombres').classList.add('d-none');
                doc.getElementById('divApellidos').classList.add('d-none');
@@ -447,7 +484,47 @@
          }
       });
 
-      modalElement.addEventListener('hidden.bs.modal', event => {
+         axios.get(`/clientes/${id}/edit`)
+            .then(function (response) {
+               if (response.data.datos) {
+                  modal.show();
+                  doc.querySelector('.modalTitulo').textContent = 'Actualizar registro'
+                  doc.querySelector('.btnGuardar').textContent = 'Actualizar'
+                  doc.getElementById('id').value = response.data.datos.id;
+                  doc.getElementById('tipo_doc').value = response.data.datos.tipo_doc;
+                  doc.getElementById('documento').value = response.data.datos.documento;
+                  doc.getElementById('div').value = response.data.datos.div;
+                  doc.getElementById('nombres').value = response.data.datos.nombres;
+                  doc.getElementById('apellidos').value = response.data.datos.apellidos;
+                  doc.getElementById('razon_social').value = response.data.datos.razon_social;
+                  doc.getElementById('correo').value = response.data.datos.correo;
+                  doc.getElementById('telefono').value = response.data.datos.telefono;
+                  doc.getElementById('direccion').value = response.data.datos.direccion;
+                  doc.getElementById('contacto').value = response.data.datos.contacto;
+               } else {
+                  Swal.fire({
+                     icon: 'error',
+                     title: 'Error',
+                     confirmButtonText: 'Aceptar',
+                     text: response.data.message,
+                  });
+                  modal.hdie();
+               }
+            })
+            .catch(function (error) {
+               console.error('Error en la solicitud:', error);
+               Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Hubo un problema al procesar la solicitud',
+                  confirmButtonText: 'Aceptar',
+               });
+            });
+      }
+   });
+
+   doc.addEventListener('click', function (e) {
+      if (e.target.matches('.btn-cerrar') || e.target.matches('#modal') || e.target.closest('.btn-cerrar')) {
          frm.reset();
          document.querySelector('.modalTitulo').textContent = 'Nuevo registro';
          document.querySelector('.btnGuardar').textContent = 'Guardar';
